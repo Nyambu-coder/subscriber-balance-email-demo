@@ -1,0 +1,152 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscriber Balance Email</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #666;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    input:focus { border-color: #4f46e5; }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #4338ca; }
+    button:disabled { background: #a5b4fc; cursor: not-allowed; }
+    .message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    .loading { opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📧 Send Balance Email</h1>
+    <p class="subtitle">Enter a subscriber ID to send them their points balance email.</p>
+
+    <label for="subscriberId">Subscriber ID</label>
+    <input 
+      type="number" 
+      id="subscriberId" 
+      placeholder="Enter subscriber ID (e.g. 1)"
+      min="1"
+    />
+
+    <button id="sendBtn" onclick="sendEmail()">Send Balance Email</button>
+
+    <div id="successMsg" class="message success"></div>
+    <div id="errorMsg" class="message error"></div>
+  </div>
+
+  <script>
+    async function sendEmail() {
+      const subscriberId = document.getElementById('subscriberId').value;
+      const btn = document.getElementById('sendBtn');
+      const successMsg = document.getElementById('successMsg');
+      const errorMsg = document.getElementById('errorMsg');
+
+      // Hide previous messages
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+
+      // Validate input
+      if (!subscriberId) {
+        errorMsg.textContent = 'Please enter a subscriber ID.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      // Loading state
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/trigger-balance-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subscriberId: parseInt(subscriberId) })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          successMsg.textContent = `✅ Email sent successfully to subscriber ${subscriberId}!`;
+          successMsg.style.display = 'block';
+        } else {
+          errorMsg.textContent = `❌ Error: ${data.error || 'Something went wrong.'}`;
+          errorMsg.style.display = 'block';
+        }
+      } catch (error) {
+        errorMsg.textContent = '❌ Could not connect to the server. Make sure it is running.';
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Balance Email';
+      }
+    }
+  </script>
+</body>
+</html>

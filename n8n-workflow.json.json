@@ -1,0 +1,138 @@
+{
+  "name": "Subscriber Balance Email",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "balance-email",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        -256
+      ],
+      "id": "1ab25a54-9553-4a85-8b63-b36e9f483182",
+      "name": "Webhook",
+      "webhookId": "885361c9-43b7-453f-9f94-b0842dad13b7"
+    },
+    {
+      "parameters": {
+        "url": "https://mercy-phantom-timothy-thriller.trycloudflare.com/api/get-points-balance",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.body.subscriberId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        352,
+        -272
+      ],
+      "id": "ede71ffc-3e12-4a70-af13-0b5a30d1ce2a",
+      "name": "Fetch Points Balance"
+    },
+    {
+      "parameters": {
+        "url": "=https://mercy-phantom-timothy-thriller.trycloudflare.com/api/subscribers/{{ $('Webhook').item.json.body.subscriberId }}",
+        "sendQuery": true,
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        544,
+        -272
+      ],
+      "id": "24d28667-bd94-4df0-b8fe-7298fc1afbb3",
+      "name": "Fetch Subscriber Details"
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@demo.com",
+        "toEmail": "={{ $('Fetch Subscriber Details').item.json.email }}",
+        "subject": "Your Points Balance",
+        "html": "=<p>Hi {{ $('Fetch Subscriber Details').item.json.first_name }},</p>\n<p>Your current points balance is: <strong>{{ $('Fetch Points Balance').item.json.points_balance }}</strong></p>\n<p>Thank you!</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        -256
+      ],
+      "id": "03707809-ec71-47a4-a28f-e1087a25fd1a",
+      "name": "Send an Email",
+      "webhookId": "8a390573-a781-46a8-bdfe-b83a7a4facc6",
+      "credentials": {
+        "smtp": {
+          "id": "S1ZZouSxGby5KAgi",
+          "name": "SMTP account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch Points Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Points Balance": {
+      "main": [
+        [
+          {
+            "node": "Fetch Subscriber Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Subscriber Details": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a50e59d8-2008-4f80-bc96-22c23596c5ef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56a61b8dd5c875d418d921c644e9a8fe24581cc0120ad1e9750ba68cc1c76bed"
+  },
+  "id": "h6ZSy8AZmJgUbl3Q",
+  "tags": []
+}

@@ -1,0 +1,69 @@
+  # QA Report: Demo n8n Email Automation
+
+## 1. Summary
+A proof-of-concept subscriber email automation system was built and tested. The system consists of a Node.js/Express backend with a SQLite database storing three demo subscribers, three REST API endpoints, an n8n cloud workflow triggered via webhook, and a simple HTML frontend page. When triggered, the system fetches a subscriber's points balance and details, then sends a personalised email via Mailtrap SMTP sandbox.
+
+## 2. Environment
+- **Backend framework:** Node.js with Express
+- **Database:** SQLite using better-sqlite3
+- **n8n setup:** n8n Cloud free trial (joy6756.app.n8n.cloud)
+- **Tunnel:** Cloudflare Tunnel (trycloudflare.com) to expose local backend to n8n
+- **Email provider:** Mailtrap sandbox (sandbox.smtp.mailtrap.io, port 2525)
+- **Testing tool:** Postman
+
+## 3. API Test Results
+
+| Test Case | Endpoint | Expected | Actual | Status | Notes |
+|---|---|---|---|---|---|
+| Get subscriber valid ID | GET /api/subscribers/1 | 200 with subscriber data | 200 with subscriber data | ✅ PASS | Returns id, email, first_name, last_name, points_balance |
+| Get subscriber invalid ID | GET /api/subscribers/abc | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Invalid subscriber ID |
+| Get subscriber not found | GET /api/subscribers/999 | 404 Not Found | 404 Not Found | ✅ PASS | Returns error: Subscriber not found |
+| Get points balance valid | GET /api/get-points-balance?id=1 | 200 with balance | 200 with balance | ✅ PASS | Returns subscriberId and points_balance |
+| Get points balance missing ID | GET /api/get-points-balance | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Missing or invalid subscriber ID |
+| Trigger email valid | POST /api/trigger-balance-email | 200 success | 200 success | ✅ PASS | Returns success: true and message |
+| Trigger email missing ID | POST /api/trigger-balance-email {} | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Missing subscriberId |
+| Trigger email subscriber not found | POST /api/trigger-balance-email {subscriberId: 999} | 404 Not Found | 404 Not Found | ✅ PASS | Returns error: Subscriber not found |
+
+## 4. n8n Workflow Test Results
+
+| Step | Expected Result | Actual Result | Status | Notes |
+|---|---|---|---|---|
+| Webhook Trigger | Receive subscriberId from backend | Successfully received subscriberId | ✅ PASS | Triggered via POST from backend |
+| Fetch Points Balance | Return points_balance for subscriber | Returned points_balance: 100 | ✅ PASS | Called via Cloudflare tunnel URL |
+| Fetch Subscriber Details | Return email and first_name | Returned all subscriber fields | ✅ PASS | Called via Cloudflare tunnel URL |
+| Send Email | Send email to subscriber via Mailtrap | Email received in Mailtrap sandbox | ✅ PASS | Email shows first name and points balance |
+
+## 5. Bugs or Issues Found
+
+| Issue | Expected | Actual | Severity | Suggested Fix |
+|---|---|---|---|---|
+| Localtunnel URL changes on restart | Stable tunnel URL | New URL generated each restart | Medium | Use Cloudflare Tunnel with fixed subdomain or deploy backend to a hosted service |
+| SMTP SSL error with Mailtrap | SMTP connects successfully | SSL handshake error | Medium | Disable STARTTLS in n8n SMTP credential settings |
+| n8n webhook test vs production URL | Workflow triggered in production | First calls hit test webhook | Low | Always use production webhook URL and ensure workflow is Published |
+
+## 6. Screenshots / Proof
+- Screenshot: Backend running on localhost:3000
+- Screenshot: GET /api/subscribers/1 returning 200 OK
+- Screenshot: POST /api/trigger-balance-email returning success
+- Screenshot: n8n workflow execution showing all nodes passing
+- Screenshot: Mailtrap inbox showing received email with correct name and balance
+- Screenshot: Frontend page showing success message
+
+## 7. Final Assessment
+
+**What works:**
+- All three API endpoints work correctly with proper error handling
+- n8n workflow successfully receives webhook, fetches subscriber data, and sends email
+- Email arrives in Mailtrap sandbox with correct subscriber name and points balance
+- All 8 Postman tests pass with correct status codes
+- Optional frontend page works end to end
+
+**What does not work:**
+- Cloudflare tunnel URL changes on every restart requiring n8n node URLs to be updated manually
+- Gmail app passwords not available on this Google account
+
+**What should be improved next:**
+- Deploy backend to a free hosted service like Railway or Render to avoid tunnel dependency
+- Add authentication to the webhook endpoint
+- Add email logging to a database table for tracking sent emails
+- Add retry logic if n8n webhook fails
