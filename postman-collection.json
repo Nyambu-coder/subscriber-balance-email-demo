@@ -1,0 +1,208 @@
+{
+  "info": {
+    "_postman_id": "7fb60d68-5ade-4e05-b33d-49f54d4f623d",
+    "name": "Subscriber Email Demo API Tests.",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54418195",
+    "_collection_link": "https://go.postman.co/collection/54418195-7fb60d68-5ade-4e05-b33d-49f54d4f623d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get Subscriber - Valid ID.",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/subscribers/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "subscribers",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Subscriber Invalid ID:",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/subscribers/abc",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "subscribers",
+            "abc"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Subscriber Not Found:",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/subscribers/999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "subscribers",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Points Balance Valid:",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/get-points-balance?id=1\n",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "get-points-balance"
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "1\n"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Points Balance Missing ID:",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/get-points-balance",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "get-points-balance"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger Email Valid",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"subscriberId\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/trigger-balance-email",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "trigger-balance-email"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "rigger Email Missing ID:",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/trigger-balance-email",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "trigger-balance-email"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger Email Subscriber Not Found:",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"subscriberId\": 999}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/trigger-balance-email",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "trigger-balance-email"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
