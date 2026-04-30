@@ -15,23 +15,23 @@ A proof-of-concept subscriber email automation system was built and tested. The 
 
 | Test Case | Endpoint | Expected | Actual | Status | Notes |
 |---|---|---|---|---|---|
-| Get subscriber valid ID | GET /api/subscribers/1 | 200 with subscriber data | 200 with subscriber data | ✅ PASS | Returns id, email, first_name, last_name, points_balance |
-| Get subscriber invalid ID | GET /api/subscribers/abc | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Invalid subscriber ID |
-| Get subscriber not found | GET /api/subscribers/999 | 404 Not Found | 404 Not Found | ✅ PASS | Returns error: Subscriber not found |
-| Get points balance valid | GET /api/get-points-balance?id=1 | 200 with balance | 200 with balance | ✅ PASS | Returns subscriberId and points_balance |
-| Get points balance missing ID | GET /api/get-points-balance | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Missing or invalid subscriber ID |
-| Trigger email valid | POST /api/trigger-balance-email | 200 success | 200 success | ✅ PASS | Returns success: true and message |
-| Trigger email missing ID | POST /api/trigger-balance-email {} | 400 Bad Request | 400 Bad Request | ✅ PASS | Returns error: Missing subscriberId |
-| Trigger email subscriber not found | POST /api/trigger-balance-email {subscriberId: 999} | 404 Not Found | 404 Not Found | ✅ PASS | Returns error: Subscriber not found |
+| Get subscriber valid ID | GET /api/subscribers/1 | 200 with subscriber data | 200 with subscriber data | PASS | Returns id, email, first_name, last_name, points_balance |
+| Get subscriber invalid ID | GET /api/subscribers/abc | 400 Bad Request | 400 Bad Request |PASS | Returns error: Invalid subscriber ID |
+| Get subscriber not found | GET /api/subscribers/999 | 404 Not Found | 404 Not Found | PASS | Returns error: Subscriber not found |
+| Get points balance valid | GET /api/get-points-balance?id=1 | 200 with balance | 200 with balance |  PASS | Returns subscriberId and points_balance |
+| Get points balance missing ID | GET /api/get-points-balance | 400 Bad Request | 400 Bad Request | PASS | Returns error: Missing or invalid subscriber ID |
+| Trigger email valid | POST /api/trigger-balance-email | 200 success | 200 success |  PASS | Returns success: true and message |
+| Trigger email missing ID | POST /api/trigger-balance-email {} | 400 Bad Request | 400 Bad Request |  PASS | Returns error: Missing subscriberId |
+| Trigger email subscriber not found | POST /api/trigger-balance-email {subscriberId: 999} | 404 Not Found | 404 Not Found |  PASS | Returns error: Subscriber not found |
 
 ## 4. n8n Workflow Test Results
 
 | Step | Expected Result | Actual Result | Status | Notes |
 |---|---|---|---|---|
-| Webhook Trigger | Receive subscriberId from backend | Successfully received subscriberId | ✅ PASS | Triggered via POST from backend |
-| Fetch Points Balance | Return points_balance for subscriber | Returned points_balance: 100 | ✅ PASS | Called via Cloudflare tunnel URL |
-| Fetch Subscriber Details | Return email and first_name | Returned all subscriber fields | ✅ PASS | Called via Cloudflare tunnel URL |
-| Send Email | Send email to subscriber via Mailtrap | Email received in Mailtrap sandbox | ✅ PASS | Email shows first name and points balance |
+| Webhook Trigger | Receive subscriberId from backend | Successfully received subscriberId |  PASS | Triggered via POST from backend |
+| Fetch Points Balance | Return points_balance for subscriber | Returned points_balance: 100 |  PASS | Called via Cloudflare tunnel URL |
+| Fetch Subscriber Details | Return email and first_name | Returned all subscriber fields |  PASS | Called via Cloudflare tunnel URL |
+| Send Email | Send email to subscriber via Mailtrap | Email received in Mailtrap sandbox |  PASS | Email shows first name and points balance |
 
 ## 5. Bugs or Issues Found
 
